@@ -26,13 +26,15 @@ h=lambda x:hashlib.sha256(x.encode()).hexdigest()
 n=int(input("N: "))
 t=[input(f"T{i+1}: ") for i in range(n)]
 a=[h(x) for x in t] #Conversión a sha-256
-niveles=[a.copy()]
+niveles=[]
 
 while len(a)>1:
     if len(a)%2:
         a.append(a[-1])
+    niveles.append(a.copy()) #La primera copia se guarda dentro del ciclo para mostrar los elementos duplicados
     a=[h(a[i]+a[i+1]) for i in range(0,len(a),2)]
-    niveles.append(a.copy())
+
+niveles.append(a.copy())
 print("Merkle Root:",a[0])
 
 for i,nivel in enumerate(niveles):
@@ -52,7 +54,7 @@ for nivel in niveles[:-1]: #Recorre los niveles desde arriba hacia abajo (no inc
     if pos%2==0:
         p=h(p+nivel[hermano])
     else:
-        h(nivel[hermano]+p)
+        p=h(nivel[hermano]+p)
     pos//=2
 if p==niveles[-1][0]:
     print("VÁLIDA")
